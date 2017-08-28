@@ -1,11 +1,13 @@
 import tensorflow as tf
+import time
+import logging.handlers
 from aries.cpu_utility import get_matrix_data
 from aries.cpu_utility import batch_norm_layer
 from aries.cpu_utility import generate_batch_data
 
-epoch_limit = 100
+epoch_limit = 1000
 batch_size = 10
-data_size = 10000
+data_size = 5000
 ln_rate = 0.002
 x_classes = 6
 h_layer_1 = 100
@@ -77,7 +79,17 @@ sess.run(tf.global_variables_initializer())
 coord = tf.train.Coordinator()
 threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
+# Logging
+logger = logging.getLogger('mylogger')
+fileHandler = logging.FileHandler("logs/cpu.log")
+streamHandler = logging.StreamHandler()
+logger.addHandler(fileHandler)
+logger.addHandler(streamHandler)
+logger.setLevel(logging.INFO)
+
 for epoch in range(epoch_limit):
+    stime = time.time()
+
     for step in range(batch_size):
         x_batch, y_batch = sess.run([train_x_batch, train_y_batch])
 
@@ -89,14 +101,16 @@ for epoch in range(epoch_limit):
                      feed_dict={X: x_batch[epoch], Y: y_batch[epoch], is_training: False})
 
         global_loss = train_loss
-        print("Epoch: {:5}\tStep: {:5}\t\tLoss: {:.3f}\t\tAccuracy : {:.2%}\t\t"
-              .format(epoch, step, train_loss, train_accuracy), train_pred)
+        global_accuracy = train_accuracy
+
+    logger.info("Epoch: {:5}\t\tLoss: {:.3f}\t\tAccuracy : {:.2%}\t\tElapsed Time : {:.2f}ms\t\tRemaining : {:.2f}min"
+              .format(epoch, global_loss, global_accuracy, (time.time()-stime), ((time.time()-stime)*(epoch_limit - epoch))/1000/60))
 
 coord.request_stop()
 coord.join(threads)
 
 # Calculate accuracy for all mnist test images
-print("Test accuracy for the latest result: %g" % accuracy.eval(
+logger.info("Test accuracy for the latest result: %g" % accuracy.eval(
     feed_dict={X: test_data[0], Y: test_data[1], is_training: False}))
 
 # save data

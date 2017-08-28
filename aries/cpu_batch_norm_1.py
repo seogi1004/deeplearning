@@ -7,11 +7,11 @@ from aries.cpu_utility import generate_batch_data
 
 epoch_limit = 1000
 batch_size = 10
-data_size = 5000
+data_size = 10000
 ln_rate = 0.002
 x_classes = 6
-h_layer_1 = 100
-h_layer_2 = 100
+h_layer_1 = 60
+h_layer_2 = 30
 nb_classes = 100
 model_path = "models/cpu_softmax.ckpt"
 
@@ -98,7 +98,7 @@ for epoch in range(epoch_limit):
 
         _, train_accuracy, train_loss, train_pred =\
             sess.run([train_op_final, accuracy, loss, prediction],
-                     feed_dict={X: x_batch[epoch], Y: y_batch[epoch], is_training: False})
+                     feed_dict={X: x_batch[step], Y: y_batch[step], is_training: False})
 
         global_loss = train_loss
         global_accuracy = train_accuracy

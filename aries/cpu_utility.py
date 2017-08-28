@@ -24,12 +24,14 @@ def get_matrix_data(fileName, nb_classes):
 
     hours = []
     minutes = []
+    weekdays = []
     outputs = []
 
     for i in range(count):
         dateObj = datetime.datetime.strptime(data["시간"][i], "%m/%d/%Y %H:%M")
         hours.append(dateObj.hour)
         minutes.append(dateObj.minute)
+        weekdays.append(dateObj.weekday())
 
         cpu = data["프로세스 CPU사용률 (%)"][i]
         level = int(round(cpu))
@@ -41,10 +43,11 @@ def get_matrix_data(fileName, nb_classes):
     data["구간"] = pd.Series(outputs, index=data.index)
     data["시"] = pd.Series(hours, index=data.index)
     data["분"] = pd.Series(minutes, index=data.index)
+    data["요일"] = pd.Series(weekdays, index=data.index)
 
     cols = data.columns.tolist()
-    xcols = cols[-2:] + cols[1:-4]
-    ycols = cols[-3]
+    xcols = cols[-3:] + cols[1:-5]
+    ycols = cols[-4]
 
     print(xcols)
     print(ycols)
@@ -69,18 +72,24 @@ def get_original_matrix_data(fileName):
 
     hours = []
     minutes = []
+    weekdays = []
 
     for i in range(count):
         dateObj = datetime.datetime.strptime(data["시간"][i], "%m/%d/%Y %H:%M")
         hours.append(dateObj.hour)
         minutes.append(dateObj.minute)
+        weekdays.append(dateObj.weekday())
 
     data["시"] = pd.Series(hours, index=data.index)
     data["분"] = pd.Series(minutes, index=data.index)
+    data["요일"] = pd.Series(weekdays, index=data.index)
 
     cols = data.columns.tolist()
-    xcols = cols[-2:] + cols[1:-3]
-    ycols = cols[-3]
+    xcols = cols[-3:] + cols[1:-4]
+    ycols = cols[-4]
+
+    print(xcols)
+    print(ycols)
 
     xdata = data[xcols]
     ydata = data[ycols]
@@ -93,7 +102,10 @@ def get_original_matrix_data(fileName):
 def get_merged_matrix_data(todayName, yesterdayName):
     today_data = get_original_matrix_data(todayName)
     yesterday_data = get_original_matrix_data(yesterdayName)
-    count = len(today_data[0])
+
+    today_new_x = []
+    today_new_y = []
+    count = len(yesterday_data[0])
 
     for i in range(count):
         today_x = today_data[0]
@@ -101,14 +113,14 @@ def get_merged_matrix_data(todayName, yesterdayName):
         yesterday_x = yesterday_data[0]
         yesterday_y = yesterday_data[1]
 
-        if(today_x[i][2] == 0 and today_x[i][3] == 0 and today_x[i][4] == 0 and today_x[i][5] == 0):
-            today_x[i][2] = yesterday_x[i][2]
-            today_x[i][3] = yesterday_x[i][3]
-            today_x[i][4] = yesterday_x[i][4]
-            today_x[i][5] = yesterday_x[i][5]
-            # today_y[i] = yesterday_y[i]
+        if i >= len(today_x[0]):
+            today_new_x.append(yesterday_x[i])
+            today_new_y.append(yesterday_y[i])
+        else:
+            today_new_x.append(today_x[i])
+            today_new_y.append(today_y[i])
 
-    return today_data[0], today_data[1]
+    return np.array(today_new_x), np.array(today_new_y)
 
 def batch_norm_layer(inputT, is_training=True, scope=None):
     # Note: is_training is tf.placeholder(tf.bool) type

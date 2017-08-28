@@ -8,8 +8,8 @@ from aries.cpu_utility import generate_batch_data
 epoch_limit = 1000
 batch_size = 10
 data_size = 10000
-ln_rate = 0.002
-x_classes = 6
+ln_rate = 0.0001
+x_classes = 12
 h_layer_1 = 60
 h_layer_2 = 30
 nb_classes = 100

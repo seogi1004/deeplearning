@@ -103,8 +103,8 @@ for epoch in range(epoch_limit):
         global_loss = train_loss
         global_accuracy = train_accuracy
 
-    logger.info("Epoch: {:5}\t\tLoss: {:.3f}\t\tAccuracy : {:.2%}\t\tElapsed Time : {:.2f}ms\t\tRemaining : {:.2f}min"
-              .format(epoch, global_loss, global_accuracy, (time.time()-stime), ((time.time()-stime)*(epoch_limit - epoch))/1000/60))
+    logger.info("Epoch: {:5}\t\tLoss: {:.3f}\t\tAccuracy : {:.2%}\t\tElapsed Time : {:.2f}sec\t\tRemaining : {:.2f}min"
+              .format(epoch, global_loss, global_accuracy, (time.time()-stime), ((time.time()-stime)*(epoch_limit - epoch))/60))
 
 coord.request_stop()
 coord.join(threads)

@@ -4,7 +4,7 @@ from aries.cpu_utility import get_merged_matrix_data
 from aries.cpu_utility import get_original_matrix_data
 
 # 입력 데이터 가져오기
-half_data = get_merged_matrix_data("data/cpu_today_half.csv", "data/cpu_yesterday.csv")
+half_data = get_merged_matrix_data("data/cpu_today_half.csv", "data/cpu_yesterday.csv", "data/cpu_train.csv")
 real_data = get_original_matrix_data("data/cpu_today.csv")
 
 with tf.Session() as sess:
@@ -20,6 +20,7 @@ with tf.Session() as sess:
     is_training = tf.get_collection('is_training')[0]
 
     predicted_data_y = sess.run(prediction, feed_dict={X: half_data[0], is_training: True})
+    # predicted_data_y = sess.run(prediction, feed_dict={X: real_data[0], is_training: True})
 
     plt.gca().set_color_cycle(['red', 'green'])
     plt.plot(real_data[1][0:1440])

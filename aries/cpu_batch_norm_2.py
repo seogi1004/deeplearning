@@ -6,7 +6,7 @@ from aries.cpu_utility import generate_batch_data
 
 epoch_limit = 1000
 batch_size = 10
-data_size = 5000
+data_size = 10000
 nb_classes = 100
 global_loss = 999999
 loss_limit = 0.4

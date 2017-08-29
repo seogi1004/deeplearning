@@ -89,7 +89,7 @@ def get_original_matrix_data(fileName):
     ycols = cols[-4]
 
     print(xcols)
-    print(ycols)
+    # print(ycols)
 
     xdata = data[xcols]
     ydata = data[ycols]
@@ -99,9 +99,10 @@ def get_original_matrix_data(fileName):
 
     return x_data, y_data
 
-def get_merged_matrix_data(todayName, yesterdayName):
+def get_merged_matrix_data(todayName, yesterdayName, allName):
     today_data = get_original_matrix_data(todayName)
     yesterday_data = get_original_matrix_data(yesterdayName)
+    all_data = get_original_matrix_data(allName)
 
     today_new_x = []
     today_new_y = []
@@ -117,11 +118,17 @@ def get_merged_matrix_data(todayName, yesterdayName):
             row_x = today_x[count_x - 1]
             row_y = yesterday_x[i]
 
-            # 요일만 오늘 데이터, 별도의 가공이 필요할듯...
-            # 지난 일주일치의 평균 또는 동일한 요일의 성능값을 x값으로 준다.
+            # 시/분/요일이 동일한 지난 데이터의 각각의 평균을 x값으로 넣어준다.
+            filter_data = pd.DataFrame(all_data[0])
+            filter_data = filter_data[filter_data[0] == row_y[0]]
+            filter_data = filter_data[filter_data[1] == row_y[1]]
+            filter_data = filter_data[filter_data[2] == row_x[2]]
+
             row_pred = [
                 row_y[0], row_y[1], row_x[2],
-                row_y[3], row_y[4], row_y[5], row_y[6], row_y[7], row_y[8], row_y[9], row_y[10], row_y[11]
+                filter_data[3].mean(), filter_data[4].mean(), filter_data[5].mean(),
+                filter_data[6].mean(), filter_data[7].mean(), filter_data[8].mean(),
+                filter_data[9].mean(), filter_data[10].mean(), filter_data[11].mean()
             ]
 
             today_new_x.append(row_pred)

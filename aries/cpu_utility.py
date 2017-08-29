@@ -105,17 +105,27 @@ def get_merged_matrix_data(todayName, yesterdayName):
 
     today_new_x = []
     today_new_y = []
-    count = len(yesterday_data[0])
+    count_x = len(today_data[0])
+    count_y = len(yesterday_data[0])
 
-    for i in range(count):
+    for i in range(count_y):
         today_x = today_data[0]
         today_y = today_data[1]
         yesterday_x = yesterday_data[0]
-        yesterday_y = yesterday_data[1]
 
-        if i >= len(today_x[0]):
-            today_new_x.append(yesterday_x[i])
-            today_new_y.append(yesterday_y[i])
+        if i >= count_x:
+            row_x = today_x[count_x - 1]
+            row_y = yesterday_x[i]
+
+            # 요일만 오늘 데이터, 별도의 가공이 필요할듯...
+            # 지난 일주일치의 평균 또는 동일한 요일의 성능값을 x값으로 준다.
+            row_pred = [
+                row_y[0], row_y[1], row_x[2],
+                row_y[3], row_y[4], row_y[5], row_y[6], row_y[7], row_y[8], row_y[9], row_y[10], row_y[11]
+            ]
+
+            today_new_x.append(row_pred)
+            today_new_y.append(0)
         else:
             today_new_x.append(today_x[i])
             today_new_y.append(today_y[i])

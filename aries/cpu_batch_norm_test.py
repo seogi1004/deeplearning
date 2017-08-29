@@ -1,12 +1,11 @@
 import tensorflow as tf
-import numpy as np
 import matplotlib.pyplot as plt
 from aries.cpu_utility import get_merged_matrix_data
+from aries.cpu_utility import get_original_matrix_data
 
 # 입력 데이터 가져오기
-reality_data = get_merged_matrix_data("data/cpu_today_half.csv", "data/cpu_yesterday.csv")
-reality_data_x = reality_data[0]
-reality_data_y = reality_data[1]
+half_data = get_merged_matrix_data("data/cpu_today_half.csv", "data/cpu_yesterday.csv")
+real_data = get_original_matrix_data("data/cpu_today.csv")
 
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
@@ -20,10 +19,10 @@ with tf.Session() as sess:
     prediction = tf.get_collection('prediction')[0]
     is_training = tf.get_collection('is_training')[0]
 
-    predicted_data_y = sess.run(prediction, feed_dict={X: reality_data_x, is_training: True})
+    predicted_data_y = sess.run(prediction, feed_dict={X: half_data[0], is_training: True})
 
     plt.gca().set_color_cycle(['red', 'green'])
-    plt.plot(reality_data_y[800:1440])
-    plt.plot(predicted_data_y[800:1440])
+    plt.plot(real_data[1][0:1440])
+    plt.plot(predicted_data_y[0:1440])
     plt.ylim(0, 50)
     plt.show()

@@ -9,7 +9,7 @@ batch_size = 10
 data_size = 5000
 nb_classes = 100
 global_loss = 999999
-loss_limit = 0.5
+loss_limit = 0.4
 
 model_dir_path = "models/"
 model_path = "cpu_softmax.ckpt"
